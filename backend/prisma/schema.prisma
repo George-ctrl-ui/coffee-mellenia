@@ -1,0 +1,74 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY_FOR_PICKUP
+  COMPLETED
+  CANCELLED
+}
+
+model Product {
+  id          String      @id @default(uuid())
+  name        String
+  description String
+  price       Int         // Price in Philippine Pesos (or centavos: 145 = 145 PHP or 14500)
+  category    String
+  imageUrl    String
+  available   Boolean     @default(true)
+  featured    Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orderItems  OrderItem[]
+
+  @@map("products")
+}
+
+model Order {
+  id            String      @id @default(uuid())
+  reference     String      @unique // e.g. CM-894102
+  customerName  String
+  customerPhone String
+  customerEmail String?
+  notes         String?
+  status        OrderStatus @default(PENDING)
+  total         Int         // Total amount in Philippine Pesos
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  items         OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  productName String
+  quantity    Int
+  unitPrice   Int
+  subtotal    Int
+
+  @@map("order_items")
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+
+  @@map("contact_messages")
+}

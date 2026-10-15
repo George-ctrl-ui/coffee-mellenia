@@ -1,0 +1,6 @@
+{
+  "name": "Coffee Mellenia",
+  "description": "Specialty coffee shop serving thoughtfully roasted artisanal brews, handcrafted espresso, and fresh pastries.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
